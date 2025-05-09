@@ -5,7 +5,7 @@
 //#include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-// #include "GroomComponent.h"
+#include "GroomComponent.h"
 
 // Sets default values
 AMyEchoChar::AMyEchoChar()
@@ -28,21 +28,21 @@ AMyEchoChar::AMyEchoChar()
 	camera->SetupAttachment(arm);
 
 	// for realistic hair.
-	//hair = CreateDefaultSubobject<UGroomComponent>(TEXT("Hair"));
+	hair = CreateDefaultSubobject<UGroomComponent>(TEXT("Hair"));
 
 	// this attach hair to the skeletal mesh of the character.
 	// GetMesh => returns skeletal mesh component of the character.(usually body)
 	// hair will follow the mesh now.
-	//hair->SetupAttachment(GetMesh());
+	hair->SetupAttachment(GetMesh());
 
 	// this specifies which socket/bone hair should attach to.
 	// AttachmentName is used to define the specific point of attachment.
 	// "hair" is the name of our socket/bone in the body.
-	//hair->AttachmentName = FString{ "head" };
+	hair->AttachmentName = FString{ "head" };
 
-	//eyebrow = CreateDefaultSubobject<UGroomComponent>(TEXT("Eyebrow"));
-	//eyebrow->SetupAttachment(GetMesh());
-	//eyebrow->AttachmentName = FString{"head"};
+	eyebrow = CreateDefaultSubobject<UGroomComponent>(TEXT("Eyebrow"));
+	eyebrow->SetupAttachment(GetMesh());
+	eyebrow->AttachmentName = FString{"head"};
 
 }
 
@@ -76,6 +76,8 @@ void AMyEchoChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	// LookUpDown mouse y
 	PlayerInputComponent->BindAxis(FName("LookUpDown"), this, &AMyEchoChar::LookUpDown);
+
+	PlayerInputComponent->BindAction(FName("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 
 }
 

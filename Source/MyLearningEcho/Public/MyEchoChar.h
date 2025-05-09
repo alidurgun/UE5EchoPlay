@@ -27,11 +27,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* camera;
 
-	// UPROPERTY(EditAnywhere)
-	// UGroomComponent* hair;
+	 UPROPERTY(EditAnywhere)
+	 UGroomComponent* hair;
 
-	// UPROPERTY(EditAnywhere)
-	// UGroomComponent* eyebrow;
+	 UPROPERTY(EditAnywhere)
+	 UGroomComponent* eyebrow;
 
 	UFUNCTION()
 	void MoveForwardBack(float Value);
