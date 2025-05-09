@@ -1,0 +1,36 @@
+# Unreal Engine
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vscode/
+.vs/
+*.VC.db
+*.sln
+*.opensdf
+*.sdf
+*.suo
+*.xcodeproj
+*.xcworkspace
+*.DS_Store
+*.log
+*.tmp
+*.bak
+*.dmp
+*.obj
+*.pch
+*.pdb
+
+# Ignore build output
+Build/
+
+# Ignore auto-generated files
+*.aps
+*.ncb
+*.user
+*.suo
+*.sln.docstates
+*.ipch
+
+# Git
+.git/
