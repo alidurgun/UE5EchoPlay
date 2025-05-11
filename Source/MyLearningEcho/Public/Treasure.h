@@ -8,6 +8,7 @@
 
 // Forward Decleration
 class UStaticMeshComponent;
+class USphereComponent;
 
 UCLASS()
 class MYLEARNINGECHO_API ATreasure : public AActor
@@ -20,6 +21,9 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* ItemMesh;
+
+	UPROPERTY(VisibleAnywhere)
+	USphereComponent* sphere;
 public:	
 	// Sets default values for this actor's properties
 	ATreasure();
@@ -30,4 +34,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void MySphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void MySphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
