@@ -6,6 +6,8 @@
 #include "Treasure.h"
 #include "Weapon.generated.h"
 
+class USceneComponent;
+
 /**
  * 
  */
@@ -15,6 +17,8 @@ class MYLEARNINGECHO_API AWeapon : public ATreasure
 	GENERATED_BODY()
 
 public:
+
+	void Equip(USceneComponent* sceneComponent, FName socketName);
 
 protected:
 

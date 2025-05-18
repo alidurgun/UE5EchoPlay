@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "CharacterTypes.h"
 #include "MyEchoAnimations.generated.h"
 
 // Forward Decleration
@@ -37,4 +38,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool IsFalling;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement | State")
+	ECharacterState CharacterState;
 };

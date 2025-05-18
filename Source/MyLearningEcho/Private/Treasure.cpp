@@ -49,14 +49,14 @@ void ATreasure::MySphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 // Called every frame
 void ATreasure::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	//Super::Tick(DeltaTime);
 
-	// To make it hanging in the air.
-	RunningTime += DeltaTime;
-	float newSin = (FMath::Sin(RunningTime * 5.f));
+	//// To make it hanging in the air.
+	//RunningTime += DeltaTime;
+	//float newSin = (FMath::Sin(RunningTime * 5.f));
 
-	// We will add this to offset as a Z value because we want this move
-	// in Z direction.
-	AddActorWorldOffset(FVector(0.f, 0.f, newSin));
+	//// We will add this to offset as a Z value because we want this move
+	//// in Z direction.
+	//AddActorWorldOffset(FVector(0.f, 0.f, newSin));
 }
 

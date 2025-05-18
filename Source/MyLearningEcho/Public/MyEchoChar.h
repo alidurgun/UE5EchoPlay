@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharacterTypes.h"
 #include "MyEchoChar.generated.h"
 
 // Forward Decleration
@@ -12,6 +13,7 @@ class USkeletalMeshComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
+class UPrimitiveComponent;
 
 UCLASS()
 class MYLEARNINGECHO_API AMyEchoChar : public ACharacter
@@ -45,6 +47,14 @@ private:
 	UFUNCTION()
 	void LookUpDown(float Value);
 
+	UPROPERTY(VisibleAnywhere)
+	bool isWeaponInRange{ false };
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* weaponMesh;
+
+	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+
 public:
 	// Sets default values for this character's properties
 	AMyEchoChar();
@@ -55,6 +65,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void EquipWeapon();
+
+	FORCEINLINE void setWeaponInRange(bool status) { isWeaponInRange = status; }
+	FORCEINLINE void setWeaponMesh(UStaticMeshComponent* weaponMesh_) { weaponMesh = weaponMesh_; }
+	FORCEINLINE ECharacterState getCharacterState() const { return CharacterState; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

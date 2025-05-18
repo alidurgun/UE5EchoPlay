@@ -2,10 +2,11 @@
 
 
 #include "MyEchoChar.h"
-//#include "Components/CapsuleComponent.h"
+#include "Treasure.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GroomComponent.h"
+#include "Components/PrimitiveComponent.h"
 
 // Sets default values
 AMyEchoChar::AMyEchoChar()
@@ -79,6 +80,8 @@ void AMyEchoChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction(FName("Jump"), EInputEvent::IE_Pressed, this, &ACharacter::Jump);
 
+	PlayerInputComponent->BindAction(FName("EquipWeapon"), EInputEvent::IE_Pressed, this, &AMyEchoChar::EquipWeapon);
+
 }
 
 void AMyEchoChar::MoveForwardBack(float Value)
@@ -116,5 +119,16 @@ void AMyEchoChar::LookUpDown(float Value)
 	if (Value != 0.f && Controller)
 	{
 		AddControllerPitchInput(Value);
+	}
+}
+
+void AMyEchoChar::EquipWeapon()
+{
+	if (isWeaponInRange) {
+		UE_LOG(LogTemp, Display, TEXT("Trying to attach to component"));
+		FAttachmentTransformRules myRule{ EAttachmentRule::SnapToTarget, true };
+		weaponMesh->AttachToComponent(GetMesh(), myRule, FName("hand_rSocket"));
+		weaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		CharacterState = ECharacterState::ECS_OneHandedWeaponEquipped;
 	}
 }

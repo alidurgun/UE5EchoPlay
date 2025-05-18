@@ -24,5 +24,6 @@ void UMyEchoAnimations::NativeUpdateAnimation(float DeltaTime)
 	{
 		GroundSpeed = UKismetMathLibrary::VSizeXY(CharMovement->Velocity);
 		IsFalling = CharMovement->IsFalling();
+		CharacterState = MyChar->getCharacterState();
 	}
 }
