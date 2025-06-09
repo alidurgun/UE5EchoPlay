@@ -14,6 +14,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UGroomComponent;
 class UPrimitiveComponent;
+class UAnimMontage;
 
 UCLASS()
 class MYLEARNINGECHO_API AMyEchoChar : public ACharacter
@@ -47,13 +48,15 @@ private:
 	UFUNCTION()
 	void LookUpDown(float Value);
 
+	void Attack();
+
 	UPROPERTY(VisibleAnywhere)
 	bool isWeaponInRange{ false };
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* weaponMesh;
 
-	ECharacterState CharacterState = ECharacterState::ECS_Unequipped;
+	ECharacterState CharacterState{ ECharacterState::ECS_Unequipped };
 
 public:
 	// Sets default values for this character's properties
@@ -66,6 +69,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void EquipWeapon();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+	UAnimMontage* AttackMontage;
 
 	FORCEINLINE void setWeaponInRange(bool status) { isWeaponInRange = status; }
 	FORCEINLINE void setWeaponMesh(UStaticMeshComponent* weaponMesh_) { weaponMesh = weaponMesh_; }
