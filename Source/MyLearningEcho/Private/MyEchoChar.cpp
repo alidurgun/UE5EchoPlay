@@ -89,7 +89,7 @@ void AMyEchoChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void AMyEchoChar::MoveForwardBack(float Value)
 {
-	if (Value != 0.f && Controller)
+	if (Value != 0.f && Controller && AnimationState == ECharacterAnimationState::ECAS_Unoccupied)
 	{
 		const FRotator ControllerRotation{ GetControlRotation() };
 		const FRotator YawRotation{ 0.f, ControllerRotation.Yaw, 0.f };
@@ -100,7 +100,7 @@ void AMyEchoChar::MoveForwardBack(float Value)
 
 void AMyEchoChar::MoveRightLeft(float Value)
 {
-	if (Value != 0.f && Controller)
+	if (Value != 0.f && Controller && AnimationState == ECharacterAnimationState::ECAS_Unoccupied)
 	{
 		const FRotator ControlRotation{ GetControlRotation() };
 		const FRotator YawRotation{ 0.f, ControlRotation.Yaw, 0.f };
@@ -127,10 +127,21 @@ void AMyEchoChar::LookUpDown(float Value)
 
 void AMyEchoChar::Attack()
 {
+	if (AnimationState == ECharacterAnimationState::ECAS_Unoccupied
+		&& CharacterState != ECharacterState::ECS_Unequipped)
+	{
+		PlayMontage();
+	}
+}
+
+void AMyEchoChar::PlayMontage()
+{
 	UAnimInstance* anim{ GetMesh()->GetAnimInstance() };
 
 	if (anim && AttackMontage)
 	{
+		AnimationState = ECharacterAnimationState::ECAS_Attacking;
+
 		// to play montage.
 		anim->Montage_Play(AttackMontage);
 
@@ -138,7 +149,7 @@ void AMyEchoChar::Attack()
 		int32 selection{ FMath::RandRange(0,1) };
 
 		// to specify section name.
-		FName sectionName{ FName("Attack1") };
+		FName sectionName{};
 		switch (selection) {
 		case 0:
 			sectionName = FName("Attack1");

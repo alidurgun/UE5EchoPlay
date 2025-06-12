@@ -53,10 +53,15 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	bool isWeaponInRange{ false };
 
+	void PlayMontage();
+
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* weaponMesh;
 
 	ECharacterState CharacterState{ ECharacterState::ECS_Unequipped };
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	ECharacterAnimationState AnimationState{ ECharacterAnimationState::ECAS_Unoccupied };
 
 public:
 	// Sets default values for this character's properties

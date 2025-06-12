@@ -29,6 +29,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+	// For hovering
+	//enum class EItemState : uint8
+	//{
+	//	EIS_Unequipped,
+	//	EIS_Equipped
+	//};
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -40,4 +47,6 @@ protected:
 
 	UFUNCTION()
 	virtual void MySphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	//EItemState ItemState{ EItemState::EIS_Unequipped };
 };

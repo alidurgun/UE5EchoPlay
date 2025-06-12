@@ -33,7 +33,7 @@ void ATreasure::MySphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	const FString actorName{ "Overlap started for " + OtherActor->GetName()};
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 10.f, FColor::Blue, actorName);
+		//GEngine->AddOnScreenDebugMessage(1, 10.f, FColor::Blue, actorName);
 	}
 }
 
@@ -42,21 +42,25 @@ void ATreasure::MySphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	const FString actorName{ "Overlap ended for " + OtherActor->GetName() };
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(1, 10.f, FColor::Red, actorName);
+		//GEngine->AddOnScreenDebugMessage(1, 10.f, FColor::Red, actorName);
 	}
 }
 
 // Called every frame
 void ATreasure::Tick(float DeltaTime)
 {
-	//Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);
 
-	//// To make it hanging in the air.
-	//RunningTime += DeltaTime;
-	//float newSin = (FMath::Sin(RunningTime * 5.f));
+	//if (ItemState == EItemState::EIS_Unequipped)
+	//{
+	//	// To make it hanging in the air.
+	//	RunningTime += DeltaTime;
+	//	float newSin = (FMath::Sin(RunningTime * 5.f));
 
-	//// We will add this to offset as a Z value because we want this move
-	//// in Z direction.
-	//AddActorWorldOffset(FVector(0.f, 0.f, newSin));
+	//	// We will add this to offset as a Z value because we want this move
+	//	// in Z direction.
+	//	AddActorWorldOffset(FVector(0.f, 0.f, newSin));
+	//}
+
 }
 
