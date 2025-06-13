@@ -53,6 +53,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	bool isWeaponInRange{ false };
 
+	bool weaponEquipped{ false };
+
 	void PlayMontage();
 
 	UPROPERTY(VisibleAnywhere)
@@ -61,7 +63,7 @@ private:
 	ECharacterState CharacterState{ ECharacterState::ECS_Unequipped };
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	ECharacterAnimationState AnimationState{ ECharacterAnimationState::ECAS_Unoccupied };
+	ECharacterActionState ActionState{ ECharacterActionState::ECAS_Unoccupied };
 
 public:
 	// Sets default values for this character's properties
@@ -75,12 +77,23 @@ public:
 
 	void EquipWeapon();
 
+	void AttachSwordToSocket(const FName& socketName);
+
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+	UAnimMontage* ArmDisarmMontage;
 
 	FORCEINLINE void setWeaponInRange(bool status) { isWeaponInRange = status; }
 	FORCEINLINE void setWeaponMesh(UStaticMeshComponent* weaponMesh_) { weaponMesh = weaponMesh_; }
 	FORCEINLINE ECharacterState getCharacterState() const { return CharacterState; }
+	
+	UFUNCTION(BlueprintCallable)
+	void Disarm();
+
+	UFUNCTION(BlueprintCallable)
+	void Arm();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

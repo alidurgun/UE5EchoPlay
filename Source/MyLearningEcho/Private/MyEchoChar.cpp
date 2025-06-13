@@ -48,6 +48,17 @@ AMyEchoChar::AMyEchoChar()
 
 }
 
+void AMyEchoChar::Disarm()
+{
+	AttachSwordToSocket(FName{ "spineSocket" });
+}
+
+void AMyEchoChar::Arm()
+{
+	UE_LOG(LogTemp, Display, TEXT("Calling arm"));
+	AttachSwordToSocket(FName{ "hand_rSocket" });
+}
+
 // Called when the game starts or when spawned
 void AMyEchoChar::BeginPlay()
 {
@@ -89,7 +100,7 @@ void AMyEchoChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void AMyEchoChar::MoveForwardBack(float Value)
 {
-	if (Value != 0.f && Controller && AnimationState == ECharacterAnimationState::ECAS_Unoccupied)
+	if (Value != 0.f && Controller && ActionState == ECharacterActionState::ECAS_Unoccupied)
 	{
 		const FRotator ControllerRotation{ GetControlRotation() };
 		const FRotator YawRotation{ 0.f, ControllerRotation.Yaw, 0.f };
@@ -100,7 +111,7 @@ void AMyEchoChar::MoveForwardBack(float Value)
 
 void AMyEchoChar::MoveRightLeft(float Value)
 {
-	if (Value != 0.f && Controller && AnimationState == ECharacterAnimationState::ECAS_Unoccupied)
+	if (Value != 0.f && Controller && ActionState == ECharacterActionState::ECAS_Unoccupied)
 	{
 		const FRotator ControlRotation{ GetControlRotation() };
 		const FRotator YawRotation{ 0.f, ControlRotation.Yaw, 0.f };
@@ -127,7 +138,7 @@ void AMyEchoChar::LookUpDown(float Value)
 
 void AMyEchoChar::Attack()
 {
-	if (AnimationState == ECharacterAnimationState::ECAS_Unoccupied
+	if (ActionState == ECharacterActionState::ECAS_Unoccupied
 		&& CharacterState != ECharacterState::ECS_Unequipped)
 	{
 		PlayMontage();
@@ -140,7 +151,7 @@ void AMyEchoChar::PlayMontage()
 
 	if (anim && AttackMontage)
 	{
-		AnimationState = ECharacterAnimationState::ECAS_Attacking;
+		ActionState = ECharacterActionState::ECAS_Attacking;
 
 		// to play montage.
 		anim->Montage_Play(AttackMontage);
@@ -169,11 +180,38 @@ void AMyEchoChar::PlayMontage()
 
 void AMyEchoChar::EquipWeapon()
 {
-	if (isWeaponInRange) {
+	if (weaponEquipped) {
+		// follow disarm or arm animations.
+		UAnimInstance* anim{ GetMesh()->GetAnimInstance() };
+
+		if (anim && ActionState == ECharacterActionState::ECAS_Unoccupied &&
+			CharacterState == ECharacterState::ECS_Unequipped && ArmDisarmMontage) {
+			// arm it
+			anim->Montage_Play(ArmDisarmMontage);
+			anim->Montage_JumpToSection("Arm", ArmDisarmMontage);
+			CharacterState = ECharacterState::ECS_OneHandedWeaponEquipped;
+		}
+
+		else if (anim && ActionState == ECharacterActionState::ECAS_Unoccupied &&
+			CharacterState != ECharacterState::ECS_Unequipped && ArmDisarmMontage) {
+			// disarm it
+			anim->Montage_Play(ArmDisarmMontage);
+			anim->Montage_JumpToSection("Disarm", ArmDisarmMontage);
+			CharacterState = ECharacterState::ECS_Unequipped;
+		}
+	}
+
+	if (isWeaponInRange && !weaponEquipped) {
 		UE_LOG(LogTemp, Display, TEXT("Trying to attach to component"));
-		FAttachmentTransformRules myRule{ EAttachmentRule::SnapToTarget, true };
-		weaponMesh->AttachToComponent(GetMesh(), myRule, FName("hand_rSocket"));
+		AttachSwordToSocket(FName{ "hand_rSocket" });
 		weaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		CharacterState = ECharacterState::ECS_OneHandedWeaponEquipped;
+		weaponEquipped = true;
 	}
+}
+
+void AMyEchoChar::AttachSwordToSocket(const FName& socketName)
+{
+	FAttachmentTransformRules myRule{ EAttachmentRule::SnapToTarget, true };
+	weaponMesh->AttachToComponent(GetMesh(), myRule, socketName);
 }
