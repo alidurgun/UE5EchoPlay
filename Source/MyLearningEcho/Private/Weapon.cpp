@@ -3,6 +3,46 @@
 
 #include "Weapon.h"
 #include "MyEchoChar.h"
+#include "Components/BoxComponent.h"
+#include "Components/SceneComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+
+AWeapon::AWeapon()
+{
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision"));
+	BoxComponent->SetupAttachment(GetRootComponent());
+
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+	BoxComponent->SetGenerateOverlapEvents(true);
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	WeaponCollisionStart = CreateDefaultSubobject<USceneComponent>(TEXT("Collision Start Point"));
+	WeaponCollisionStart->SetupAttachment(GetRootComponent());
+
+	WeaponCollisionEnd = CreateDefaultSubobject<USceneComponent>(TEXT("Collision End Point"));
+	WeaponCollisionEnd->SetupAttachment(GetRootComponent());
+}
+
+void AWeapon::OnBoxOverlapStart(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	const FVector start = WeaponCollisionStart->GetComponentLocation();
+	const FVector end = WeaponCollisionEnd->GetComponentLocation();
+	const FVector halfSize{ 5.f,5.f,5.f };
+	const TArray<AActor*> ActorsToIgnore{ this };
+	FHitResult hitResult;
+
+	UKismetSystemLibrary::BoxTraceSingle(this, start, end, halfSize,
+		WeaponCollisionStart->GetComponentRotation(), ETraceTypeQuery::TraceTypeQuery1,
+		false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hitResult, true);
+}
+
+void AWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnBoxOverlapStart);
+}
 
 void AWeapon::MySphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -12,6 +52,7 @@ void AWeapon::MySphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	{
 		UE_LOG(LogTemp, Display, TEXT("Setting character for weapon equip!"));
 		echoChar->setWeaponInRange(true);
+		echoChar->setWeapon(this);
 		echoChar->setWeaponMesh(ItemMesh);
 	}
 	UE_LOG(LogTemp, Display, TEXT("Overlap start function ended"));

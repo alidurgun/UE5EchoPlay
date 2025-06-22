@@ -8,6 +8,8 @@
 #include "GroomComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "Animation/AnimInstance.h"
+#include "Weapon.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 AMyEchoChar::AMyEchoChar()
@@ -57,6 +59,14 @@ void AMyEchoChar::Arm()
 {
 	UE_LOG(LogTemp, Display, TEXT("Calling arm"));
 	AttachSwordToSocket(FName{ "hand_rSocket" });
+}
+
+void AMyEchoChar::SetWeaponCollision(ECollisionEnabled::Type newCollision)
+{
+	if (weaponEquipped && equippedWeapon)
+	{
+		equippedWeapon->GetWeaponBox()->SetCollisionEnabled(newCollision);
+	}
 }
 
 // Called when the game starts or when spawned

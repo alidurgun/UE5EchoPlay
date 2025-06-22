@@ -15,6 +15,7 @@ class UCameraComponent;
 class UGroomComponent;
 class UPrimitiveComponent;
 class UAnimMontage;
+class AWeapon;
 
 UCLASS()
 class MYLEARNINGECHO_API AMyEchoChar : public ACharacter
@@ -60,6 +61,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* weaponMesh;
 
+	AWeapon* equippedWeapon;
+
 	ECharacterState CharacterState{ ECharacterState::ECS_Unequipped };
 
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -86,6 +89,7 @@ public:
 	UAnimMontage* ArmDisarmMontage;
 
 	FORCEINLINE void setWeaponInRange(bool status) { isWeaponInRange = status; }
+	FORCEINLINE void setWeapon(AWeapon* currentWeapon) { equippedWeapon = currentWeapon; }
 	FORCEINLINE void setWeaponMesh(UStaticMeshComponent* weaponMesh_) { weaponMesh = weaponMesh_; }
 	FORCEINLINE ECharacterState getCharacterState() const { return CharacterState; }
 	
@@ -94,6 +98,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Arm();
+
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponCollision(ECollisionEnabled::Type newCollision);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
