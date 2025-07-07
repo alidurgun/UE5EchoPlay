@@ -44,10 +44,11 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
 	DrawDebugSphere(GetWorld(), ImpactPoint, 10.0f, 10, FColor::Red, false, 5.0f);
-	PlayMontage();
+	const FName sectionName = calculateHitLocation(ImpactPoint);
+	PlayMontage(sectionName);
 }
 
-void AEnemy::PlayMontage()
+void AEnemy::PlayMontage(const FName& sectionName)
 {
 	UAnimInstance* anim{ GetMesh()->GetAnimInstance() };
 	
@@ -55,9 +56,6 @@ void AEnemy::PlayMontage()
 	{
 		// To play montage.
 		anim->Montage_Play(HitMontage);
-
-		// Which section to play
-		FName sectionName{"HitFromLeft"};
 
 		// Jump to that section.
 		anim->Montage_JumpToSection(sectionName, HitMontage);

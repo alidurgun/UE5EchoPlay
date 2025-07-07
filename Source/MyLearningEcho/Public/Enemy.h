@@ -36,6 +36,6 @@ public:
 	UAnimMontage* HitMontage;
 
 private:
-	void PlayMontage();
+	void PlayMontage(const FName& sectionName);
 	const FName calculateHitLocation(const FVector& ImpactPoint);
 };
