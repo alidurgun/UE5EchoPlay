@@ -3,6 +3,7 @@
 
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
+#include "Animation/AnimInstance.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -11,6 +12,7 @@ AEnemy::AEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetMesh()->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetGenerateOverlapEvents(true);
@@ -37,5 +39,69 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemy::GetHit(const FVector& ImpactPoint)
+{
+	DrawDebugSphere(GetWorld(), ImpactPoint, 10.0f, 10, FColor::Red, false, 5.0f);
+	PlayMontage();
+}
+
+void AEnemy::PlayMontage()
+{
+	UAnimInstance* anim{ GetMesh()->GetAnimInstance() };
+	
+	if (anim && HitMontage)
+	{
+		// To play montage.
+		anim->Montage_Play(HitMontage);
+
+		// Which section to play
+		FName sectionName{"HitFromLeft"};
+
+		// Jump to that section.
+		anim->Montage_JumpToSection(sectionName, HitMontage);
+	}
+}
+
+const FName AEnemy::calculateHitLocation(const FVector& ImpactPoint)
+{
+	const FVector Forward{ GetActorForwardVector() };
+
+	// Lower impact point to the Enemy's Actor Location Z.
+	const FVector ImpactLowered{ ImpactPoint.X, ImpactPoint.Y, GetActorLocation().Z };
+	const FVector ToHit = FVector(ImpactLowered - GetActorLocation()).GetSafeNormal();
+
+	// Forward * ToHit = |Forward||ToHit| * cos(theta)
+	// |Forward| = 1, |ToHit| = 1, so Forward * ToHit = cos(theta)
+	const double cosTheta = FVector::DotProduct(Forward, ToHit);
+
+	// Take the inverse cosine (arc-cosine) of cos(theta) to get theta
+	// result in radiant form.
+	double theta = FMath::Acos(cosTheta);
+
+	// convert from radiant to degrees.
+	theta = FMath::RadiansToDegrees(theta);
+
+	const FVector Crossprod{ FVector::CrossProduct(Forward,ToHit) };
+
+	// if cross product points down then theta should be negative.
+	if (Crossprod.Z < 0)
+	{
+		theta *= -1;
+	}
+
+	FName sectionName{ "HitFromBack" };
+	if (theta < 45.f && theta >= -45.f) {
+		sectionName = FName{ "HitFromFront" };
+	}
+	else if (theta >= 135.f && theta < -45.f) {
+		sectionName = FName{ "HitFromLeft" };
+	}
+	else if (theta >= 45.f && theta < 135.f) {
+		sectionName = FName{ "HitFromRight" };
+	}
+
+	return sectionName;
 }
 

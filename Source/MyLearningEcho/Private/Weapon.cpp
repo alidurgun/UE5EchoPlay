@@ -6,6 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SceneComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "HitInterface.h"
 
 AWeapon::AWeapon()
 {
@@ -30,12 +31,27 @@ void AWeapon::OnBoxOverlapStart(UPrimitiveComponent* OverlappedComponent, AActor
 	const FVector start = WeaponCollisionStart->GetComponentLocation();
 	const FVector end = WeaponCollisionEnd->GetComponentLocation();
 	const FVector halfSize{ 5.f,5.f,5.f };
-	const TArray<AActor*> ActorsToIgnore{ this };
+	TArray<AActor*> ActorsToIgnore{ this };
 	FHitResult hitResult;
+
+	for (AActor* actor : ActorsAlreadyHit) {
+		ActorsToIgnore.AddUnique(actor);
+	}
 
 	UKismetSystemLibrary::BoxTraceSingle(this, start, end, halfSize,
 		WeaponCollisionStart->GetComponentRotation(), ETraceTypeQuery::TraceTypeQuery1,
 		false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hitResult, true);
+
+	// we are adding which actor that we hit in order to prevent multiple hit.
+	ActorsAlreadyHit.AddUnique(OtherActor);
+
+	if (AActor* hitActor = hitResult.GetActor()) {
+		IHitInterface* hitInterface = Cast<IHitInterface>(hitActor);
+
+		if (hitInterface) {
+			hitInterface->GetHit(hitResult.ImpactPoint);
+		}
+	}
 }
 
 void AWeapon::BeginPlay()

@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "HitInterface.h"
 #include "Enemy.generated.h"
 
+class UAnimMontage;
+
 UCLASS()
-class MYLEARNINGECHO_API AEnemy : public ACharacter
+class MYLEARNINGECHO_API AEnemy : public ACharacter, public IHitInterface
 {
 	GENERATED_BODY()
 
@@ -26,4 +29,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void GetHit(const FVector &ImpactPoint) override;
+
+	// animation montages for getting hit.
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* HitMontage;
+
+private:
+	void PlayMontage();
+	const FName calculateHitLocation(const FVector& ImpactPoint);
 };

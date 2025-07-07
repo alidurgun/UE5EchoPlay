@@ -66,6 +66,7 @@ void AMyEchoChar::SetWeaponCollision(ECollisionEnabled::Type newCollision)
 	if (weaponEquipped && equippedWeapon)
 	{
 		equippedWeapon->GetWeaponBox()->SetCollisionEnabled(newCollision);
+		equippedWeapon->ActorsAlreadyHit.Empty();
 	}
 }
 

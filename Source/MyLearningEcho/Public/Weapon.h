@@ -27,6 +27,9 @@ public:
 
 	FORCEINLINE UBoxComponent* GetWeaponBox() { return BoxComponent; }
 
+	// Already hit Actors.
+	TArray<AActor*> ActorsAlreadyHit;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
