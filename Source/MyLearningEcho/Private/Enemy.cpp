@@ -4,6 +4,7 @@
 #include "Enemy.h"
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -43,8 +44,18 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemy::GetHit(const FVector& ImpactPoint)
 {
-	DrawDebugSphere(GetWorld(), ImpactPoint, 10.0f, 10, FColor::Red, false, 5.0f);
+	//DrawDebugSphere(GetWorld(), ImpactPoint, 10.0f, 10, FColor::Red, false, 5.0f);
+
+	// Spawn particle now
+	if (hitParticle)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitParticle, ImpactPoint);
+	}
+	
+	// Calculate where the hit comes from.
 	const FName sectionName = calculateHitLocation(ImpactPoint);
+
+	// Then play montage according to hit direction.
 	PlayMontage(sectionName);
 }
 

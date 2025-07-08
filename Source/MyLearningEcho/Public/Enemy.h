@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimMontage* HitMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	UParticleSystem* hitParticle;
+
 private:
 	void PlayMontage(const FName& sectionName);
 	const FName calculateHitLocation(const FVector& ImpactPoint);
