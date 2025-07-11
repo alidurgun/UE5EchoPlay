@@ -38,6 +38,9 @@ protected:
 	
 	virtual void MySphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void BreakSomething(const FVector& ImpactPoint);
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 	UBoxComponent* BoxComponent;

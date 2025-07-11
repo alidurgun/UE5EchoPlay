@@ -45,6 +45,9 @@ void AWeapon::OnBoxOverlapStart(UPrimitiveComponent* OverlappedComponent, AActor
 	// we are adding which actor that we hit in order to prevent multiple hit.
 	ActorsAlreadyHit.AddUnique(OtherActor);
 
+	// Call break function if we are hitting any destructible object.
+	BreakSomething(hitResult.ImpactPoint);
+
 	if (AActor* hitActor = hitResult.GetActor()) {
 		IHitInterface* hitInterface = Cast<IHitInterface>(hitActor);
 
