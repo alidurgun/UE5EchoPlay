@@ -42,7 +42,7 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AEnemy::GetHit(const FVector& ImpactPoint)
+void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	//DrawDebugSphere(GetWorld(), ImpactPoint, 10.0f, 10, FColor::Red, false, 5.0f);
 

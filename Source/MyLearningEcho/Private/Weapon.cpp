@@ -40,7 +40,7 @@ void AWeapon::OnBoxOverlapStart(UPrimitiveComponent* OverlappedComponent, AActor
 
 	UKismetSystemLibrary::BoxTraceSingle(this, start, end, halfSize,
 		WeaponCollisionStart->GetComponentRotation(), ETraceTypeQuery::TraceTypeQuery1,
-		false, ActorsToIgnore, EDrawDebugTrace::ForDuration, hitResult, true);
+		false, ActorsToIgnore, EDrawDebugTrace::None, hitResult, true);
 
 	// we are adding which actor that we hit in order to prevent multiple hit.
 	ActorsAlreadyHit.AddUnique(OtherActor);
@@ -52,7 +52,8 @@ void AWeapon::OnBoxOverlapStart(UPrimitiveComponent* OverlappedComponent, AActor
 		IHitInterface* hitInterface = Cast<IHitInterface>(hitActor);
 
 		if (hitInterface) {
-			hitInterface->GetHit(hitResult.ImpactPoint);
+			// because of it is native event now. we are calling it like that.
+			hitInterface->Execute_GetHit(hitActor, hitResult.ImpactPoint);
 		}
 	}
 }

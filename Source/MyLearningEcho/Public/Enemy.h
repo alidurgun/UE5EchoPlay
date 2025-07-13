@@ -29,7 +29,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void GetHit(const FVector &ImpactPoint) override;
+	void GetHit_Implementation(const FVector &ImpactPoint) override;
 
 	// animation montages for getting hit.
 	UPROPERTY(EditAnywhere, Category = "Animations")
