@@ -25,10 +25,15 @@ ABreakableActor::ABreakableActor()
 	capsule->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	capsule->SetupAttachment(GetRootComponent());
+	isBroken = false;
 }
 
 void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint)
 {
+	if (isBroken) {
+		return;
+	}
+
 	// Get the world.
 	UWorld* world{ GetWorld() };
 
@@ -37,11 +42,13 @@ void ABreakableActor::GetHit_Implementation(const FVector& ImpactPoint)
 		// adjust location.
 		FVector location{ GetActorLocation() };
 		location.Z += 45.f;
-
+		
 		// to spawn actor.
-		world->SpawnActor<ATreasure>(TreasureClass, location, FRotator{0.f,0.f,0.f});
+		world->SpawnActor<ATreasure>(TreasureClass, location, FRotator::ZeroRotator);
 
 		capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
+		isBroken = true;
 	}
 }
 

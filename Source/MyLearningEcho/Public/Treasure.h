@@ -9,6 +9,7 @@
 // Forward Decleration
 class UStaticMeshComponent;
 class USphereComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class MYLEARNINGECHO_API ATreasure : public AActor
@@ -41,6 +42,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* ItemMesh;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraComponent* EmbersEffect;
 
 	UFUNCTION()
 	virtual void MySphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

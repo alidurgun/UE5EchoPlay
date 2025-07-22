@@ -39,4 +39,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	UCapsuleComponent* capsule;
 
+	bool isBroken{ false };
+
 };

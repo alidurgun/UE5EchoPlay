@@ -7,6 +7,7 @@
 #include "Components/SceneComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "HitInterface.h"
+#include <NiagaraComponent.h>
 
 AWeapon::AWeapon()
 {
@@ -68,12 +69,14 @@ void AWeapon::MySphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 {
 	Super::MySphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	AMyEchoChar* echoChar{ Cast<AMyEchoChar>(OtherActor) };
-	if (echoChar)
+	if (echoChar && EmbersEffect)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Setting character for weapon equip!"));
 		echoChar->setWeaponInRange(true);
 		echoChar->setWeapon(this);
 		echoChar->setWeaponMesh(ItemMesh);
+
+		EmbersEffect->Deactivate();
 	}
 	UE_LOG(LogTemp, Display, TEXT("Overlap start function ended"));
 }

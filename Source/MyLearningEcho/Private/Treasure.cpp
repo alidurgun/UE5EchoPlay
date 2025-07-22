@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include <NiagaraComponent.h>
 
 // Sets default values
 ATreasure::ATreasure()
@@ -17,6 +18,9 @@ ATreasure::ATreasure()
 
 	sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	sphere->SetupAttachment(GetRootComponent());
+
+	EmbersEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Embers Effect"));
+	EmbersEffect->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
