@@ -10,6 +10,7 @@
 #include "Animation/AnimInstance.h"
 #include "Weapon.h"
 #include "Components/BoxComponent.h"
+#include <NiagaraComponent.h>
 
 // Sets default values
 AMyEchoChar::AMyEchoChar()
@@ -218,6 +219,16 @@ void AMyEchoChar::EquipWeapon()
 		weaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		CharacterState = ECharacterState::ECS_OneHandedWeaponEquipped;
 		weaponEquipped = true;
+
+		if (UNiagaraComponent* embersEffect = equippedWeapon->GetEmberEffect()) {
+			embersEffect->Deactivate();
+		}
+
+		// owner of the weapon is character now.
+		equippedWeapon->SetOwner(this);
+
+		// it's instigator is also our character now.
+		equippedWeapon->SetInstigator(this);
 	}
 }
 

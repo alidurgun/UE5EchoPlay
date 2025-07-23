@@ -29,6 +29,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	FORCEINLINE UNiagaraComponent* GetEmberEffect() { return this->EmbersEffect; }
+
 protected:
 	// For hovering
 	//enum class EItemState : uint8

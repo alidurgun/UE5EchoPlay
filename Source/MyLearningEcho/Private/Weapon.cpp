@@ -7,7 +7,7 @@
 #include "Components/SceneComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "HitInterface.h"
-#include <NiagaraComponent.h>
+#include "Kismet/GameplayStatics.h"
 
 AWeapon::AWeapon()
 {
@@ -25,6 +25,8 @@ AWeapon::AWeapon()
 
 	WeaponCollisionEnd = CreateDefaultSubobject<USceneComponent>(TEXT("Collision End Point"));
 	WeaponCollisionEnd->SetupAttachment(GetRootComponent());
+
+	DamagePoint = 35.0f;
 }
 
 void AWeapon::OnBoxOverlapStart(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -55,6 +57,7 @@ void AWeapon::OnBoxOverlapStart(UPrimitiveComponent* OverlappedComponent, AActor
 		if (hitInterface) {
 			// because of it is native event now. we are calling it like that.
 			hitInterface->Execute_GetHit(hitActor, hitResult.ImpactPoint);
+			UGameplayStatics::ApplyDamage(hitActor, this->DamagePoint, GetInstigator()->GetController(), this, UDamageType::StaticClass());
 		}
 	}
 }
@@ -69,14 +72,12 @@ void AWeapon::MySphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 {
 	Super::MySphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	AMyEchoChar* echoChar{ Cast<AMyEchoChar>(OtherActor) };
-	if (echoChar && EmbersEffect)
+	if (echoChar)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Setting character for weapon equip!"));
 		echoChar->setWeaponInRange(true);
 		echoChar->setWeapon(this);
 		echoChar->setWeaponMesh(ItemMesh);
-
-		EmbersEffect->Deactivate();
 	}
 	UE_LOG(LogTemp, Display, TEXT("Overlap start function ended"));
 }

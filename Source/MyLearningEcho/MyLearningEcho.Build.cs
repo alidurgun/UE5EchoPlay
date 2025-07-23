@@ -8,7 +8,7 @@ public class MyLearningEcho : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Niagara", "HairStrandsCore", "GeometryCollectionEngine" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Niagara", "HairStrandsCore", "GeometryCollectionEngine", "UMG" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

@@ -5,6 +5,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include <CharacterAttributes.h>
+#include <Widget_HealthBarComponent.h>
 
 // Sets default values
 AEnemy::AEnemy()
@@ -19,6 +21,12 @@ AEnemy::AEnemy()
 	GetMesh()->SetGenerateOverlapEvents(true);
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+
+	CharacterAttributes = CreateDefaultSubobject<UCharacterAttributes>(TEXT("Character Attributes"));
+
+	WHealthBarComponent = CreateDefaultSubobject<UWidget_HealthBarComponent>(TEXT("Widget Health Bar"));
+	WHealthBarComponent->SetupAttachment(GetRootComponent());
+
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +34,19 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (WHealthBarComponent && CharacterAttributes) {
+		WHealthBarComponent->SetHealthPercent(CharacterAttributes->GetCurrentHealthPercent());
+	}
+}
+
+float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (CharacterAttributes && WHealthBarComponent) {
+		CharacterAttributes->DamageCurrentHealth(Damage);
+		WHealthBarComponent->SetHealthPercent(CharacterAttributes->GetCurrentHealthPercent());
+	}
+
+	return Damage;
 }
 
 // Called every frame

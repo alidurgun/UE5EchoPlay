@@ -8,6 +8,8 @@
 #include "Enemy.generated.h"
 
 class UAnimMontage;
+class UCharacterAttributes;
+class UWidget_HealthBarComponent;
 
 UCLASS()
 class MYLEARNINGECHO_API AEnemy : public ACharacter, public IHitInterface
@@ -21,6 +23,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 public:	
 	// Called every frame
@@ -37,6 +41,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	UParticleSystem* hitParticle;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	UCharacterAttributes* CharacterAttributes;
+
+	UPROPERTY(EditAnywhere)
+	UWidget_HealthBarComponent* WHealthBarComponent;
 
 private:
 	void PlayMontage(const FName& sectionName);
