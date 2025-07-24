@@ -35,6 +35,8 @@ void AEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	if (WHealthBarComponent && CharacterAttributes) {
+		// Turn of the health bar.
+		WHealthBarComponent->SetVisibility(false);
 		WHealthBarComponent->SetHealthPercent(CharacterAttributes->GetCurrentHealthPercent());
 	}
 }
@@ -42,8 +44,17 @@ void AEnemy::BeginPlay()
 float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	if (CharacterAttributes && WHealthBarComponent) {
+		DamageCauserActor = EventInstigator->GetPawn();
 		CharacterAttributes->DamageCurrentHealth(Damage);
 		WHealthBarComponent->SetHealthPercent(CharacterAttributes->GetCurrentHealthPercent());
+
+		if (!isAlive()) {
+			Die();
+			WHealthBarComponent->SetVisibility(false);
+		}
+		else {
+			WHealthBarComponent->SetVisibility(true);
+		}
 	}
 
 	return Damage;
@@ -53,6 +64,16 @@ float AEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AControl
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (DamageCauserActor)
+	{
+		const double distance{ (DamageCauserActor->GetActorLocation() - GetActorLocation()).Size() };
+		if (distance > AggroRange && WHealthBarComponent) {
+			WHealthBarComponent->SetVisibility(false);
+			DamageCauserActor = nullptr;
+		}
+	}
+	
+
 
 }
 
@@ -67,6 +88,9 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	//DrawDebugSphere(GetWorld(), ImpactPoint, 10.0f, 10, FColor::Red, false, 5.0f);
 
+	if (!isAlive())
+		return;
+
 	// Spawn particle now
 	if (hitParticle)
 	{
@@ -78,6 +102,59 @@ void AEnemy::GetHit_Implementation(const FVector& ImpactPoint)
 
 	// Then play montage according to hit direction.
 	PlayMontage(sectionName);
+}
+
+void AEnemy::Die()
+{
+	UAnimInstance* anim{ GetMesh()->GetAnimInstance() };
+	if (DeathMontage && anim)
+	{
+		// play montage.
+		anim->Montage_Play(DeathMontage);
+
+		int32 selectionNumber{ FMath::RandRange(1,4) };
+
+		FName sectionName{};
+		switch (selectionNumber) {
+		case 1:
+			sectionName = FName{ "Death1" };
+			deathPose = EDeathPose::EDP_DeathPose1;
+			break;
+		case 2:
+			sectionName = FName{ "Death2" };
+			deathPose = EDeathPose::EDP_DeathPose2;
+			break;
+		case 3:
+			sectionName = FName{ "Death3" };
+			deathPose = EDeathPose::EDP_DeathPose3;
+			break;
+		case 4:
+			sectionName = FName{ "Death4" };
+			deathPose = EDeathPose::EDP_DeathPose4;
+			break;
+		default:
+			sectionName = FName{ "Death4" };
+			deathPose = EDeathPose::EDP_DeathPose4;
+			break;
+		}
+
+		// jump to specified section.
+		anim->Montage_JumpToSection(sectionName, DeathMontage);
+	}
+
+	// disable collision:
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	SetLifeSpan(3.0f);
+}
+
+bool AEnemy::isAlive()
+{
+	if (CharacterAttributes)
+	{
+		return CharacterAttributes->GetCurrentHealthPercent() > 0.f;
+	}
+	return true;
 }
 
 void AEnemy::PlayMontage(const FName& sectionName)

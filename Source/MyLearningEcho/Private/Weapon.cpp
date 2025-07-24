@@ -55,9 +55,12 @@ void AWeapon::OnBoxOverlapStart(UPrimitiveComponent* OverlappedComponent, AActor
 		IHitInterface* hitInterface = Cast<IHitInterface>(hitActor);
 
 		if (hitInterface) {
+			// apply damage.
+			UGameplayStatics::ApplyDamage(hitActor, this->DamagePoint, GetInstigator()->GetController(), this, UDamageType::StaticClass());
+
 			// because of it is native event now. we are calling it like that.
 			hitInterface->Execute_GetHit(hitActor, hitResult.ImpactPoint);
-			UGameplayStatics::ApplyDamage(hitActor, this->DamagePoint, GetInstigator()->GetController(), this, UDamageType::StaticClass());
+			
 		}
 	}
 }

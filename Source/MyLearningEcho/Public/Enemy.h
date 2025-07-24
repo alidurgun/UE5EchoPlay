@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "HitInterface.h"
+#include "CharacterTypes.h"
 #include "Enemy.generated.h"
 
 class UAnimMontage;
@@ -39,6 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimMontage* HitMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimMontage* DeathMontage;
+
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	UParticleSystem* hitParticle;
 
@@ -48,7 +52,19 @@ public:
 	UPROPERTY(EditAnywhere)
 	UWidget_HealthBarComponent* WHealthBarComponent;
 
+	UPROPERTY(BlueprintReadOnly)
+	EDeathPose deathPose{ EDeathPose::EDP_StillAlive };
+
+	bool isAlive();
+
 private:
 	void PlayMontage(const FName& sectionName);
 	const FName calculateHitLocation(const FVector& ImpactPoint);
+	void Die();
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	AActor* DamageCauserActor;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float AggroRange{ 500.f };
 };
