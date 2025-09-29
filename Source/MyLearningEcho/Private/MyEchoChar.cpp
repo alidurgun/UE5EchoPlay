@@ -11,6 +11,7 @@
 #include "Weapon.h"
 #include "Components/BoxComponent.h"
 #include <NiagaraComponent.h>
+#include "CharacterAttributes.h"
 
 // Sets default values
 AMyEchoChar::AMyEchoChar()
@@ -75,7 +76,21 @@ void AMyEchoChar::SetWeaponCollision(ECollisionEnabled::Type newCollision)
 void AMyEchoChar::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	Tags.Add("Character");
+
+	if (charAttributes) {
+		charAttributes->SetMaxHealth(100.0f);
+		charAttributes->SetCurrentHealth(100.0f);
+	}
+}
+
+float AMyEchoChar::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	// Put some ui for death.
+	return Damage;
 }
 
 // Called every frame
@@ -113,7 +128,7 @@ void AMyEchoChar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void AMyEchoChar::MoveForwardBack(float Value)
 {
 	if (Value != 0.f && Controller && ActionState == ECharacterActionState::ECAS_Unoccupied)
-	{
+	{;
 		const FRotator ControllerRotation{ GetControlRotation() };
 		const FRotator YawRotation{ 0.f, ControllerRotation.Yaw, 0.f };
 		const FVector Direction{ FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X) };
@@ -150,45 +165,48 @@ void AMyEchoChar::LookUpDown(float Value)
 
 void AMyEchoChar::Attack()
 {
-	if (ActionState == ECharacterActionState::ECAS_Unoccupied
-		&& CharacterState != ECharacterState::ECS_Unequipped)
-	{
-		PlayMontage();
-	}
+	//if (ActionState == ECharacterActionState::ECAS_Unoccupied
+	//	&& CharacterState != ECharacterState::ECS_Unequipped)
+	//{
+	//	if (AttackNames.Num() > 0) {
+	//		int32 index = FMath::RandRange(0, AttackNames.Num());
+	//		PlayMontage(AttackNames[index],AttackMontage);
+	//	}
+	//}
 }
 
-void AMyEchoChar::PlayMontage()
-{
-	UAnimInstance* anim{ GetMesh()->GetAnimInstance() };
-
-	if (anim && AttackMontage)
-	{
-		ActionState = ECharacterActionState::ECAS_Attacking;
-
-		// to play montage.
-		anim->Montage_Play(AttackMontage);
-
-		// to make attack animation random.
-		int32 selection{ FMath::RandRange(0,1) };
-
-		// to specify section name.
-		FName sectionName{};
-		switch (selection) {
-		case 0:
-			sectionName = FName("Attack1");
-			break;
-		case 1:
-			sectionName = FName("Attack2");
-			break;
-		default:
-			sectionName = FName("Attack1");
-			break;
-		}
-		anim->Montage_JumpToSection(sectionName, AttackMontage);
-	}
-	else
-		UE_LOG(LogTemp, Error, TEXT("AttackMontage or anim is null"));
-}
+//void AMyEchoChar::PlayMontage()
+//{
+//	UAnimInstance* anim{ GetMesh()->GetAnimInstance() };
+//
+//	if (anim && AttackMontage)
+//	{
+//		ActionState = ECharacterActionState::ECAS_Attacking;
+//
+//		// to play montage.
+//		anim->Montage_Play(AttackMontage);
+//
+//		// to make attack animation random.
+//		int32 selection{ FMath::RandRange(0,1) };
+//
+//		// to specify section name.
+//		FName sectionName{};
+//		switch (selection) {
+//		case 0:
+//			sectionName = FName("Attack1");
+//			break;
+//		case 1:
+//			sectionName = FName("Attack2");
+//			break;
+//		default:
+//			sectionName = FName("Attack1");
+//			break;
+//		}
+//		anim->Montage_JumpToSection(sectionName, AttackMontage);
+//	}
+//	else
+//		UE_LOG(LogTemp, Error, TEXT("AttackMontage or anim is null"));
+//}
 
 void AMyEchoChar::EquipWeapon()
 {

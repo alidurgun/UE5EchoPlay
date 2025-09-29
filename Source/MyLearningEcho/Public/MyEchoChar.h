@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterTypes.h"
+#include "BaseCharacter.h"
 #include "MyEchoChar.generated.h"
 
 // Forward Decleration
@@ -16,9 +17,10 @@ class UGroomComponent;
 class UPrimitiveComponent;
 class UAnimMontage;
 class AWeapon;
+class UCharacterAttributes;
 
 UCLASS()
-class MYLEARNINGECHO_API AMyEchoChar : public ACharacter
+class MYLEARNINGECHO_API AMyEchoChar : public ABaseCharacter
 {
 	GENERATED_BODY()
 private:
@@ -56,7 +58,7 @@ private:
 
 	bool weaponEquipped{ false };
 
-	void PlayMontage();
+	//void PlayMontage();
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* weaponMesh;
@@ -83,9 +85,6 @@ public:
 	void AttachSwordToSocket(const FName& socketName);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
-	UAnimMontage* AttackMontage;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	UAnimMontage* ArmDisarmMontage;
 
 	FORCEINLINE void setWeaponInRange(bool status) { isWeaponInRange = status; }
@@ -101,7 +100,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponCollision(ECollisionEnabled::Type newCollision);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 };

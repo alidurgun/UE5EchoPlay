@@ -19,6 +19,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	FORCEINLINE void SetMaxHealth(float MaxHealth_) { this->MaxHealth = MaxHealth_; }
+	FORCEINLINE void SetCurrentHealth(float CurrentHealth_) { this->CurrentHealth = CurrentHealth_; }
 	FORCEINLINE float GetCurrentHealthPercent() { return this->CurrentHealth / this->MaxHealth; }
 	FORCEINLINE void DamageCurrentHealth(float Damage) { this->CurrentHealth = FMath::Clamp(this->CurrentHealth - Damage, 0.0f, this->MaxHealth); }
 
